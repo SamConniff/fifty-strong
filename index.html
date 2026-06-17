@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fifty Strong</title>
+<meta name="theme-color" content="#2f9e6b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fifty Strong">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20180%20180'%3E%3Crect%20width='180'%20height='180'%20rx='40'%20fill='%232f9e6b'/%3E%3Ctext%20x='90'%20y='120'%20font-family='Arial'%20font-size='90'%20font-weight='bold'%20fill='white'%20text-anchor='middle'%3E50%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Fifty%20Strong%22%2C%22short_name%22%3A%22Fifty%20Strong%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f7f3ec%22%2C%22theme_color%22%3A%22%232f9e6b%22%2C%22start_url%22%3A%22.%2F%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2527%2520viewBox%253D%25270%25200%2520512%2520512%2527%253E%253Crect%2520width%253D%2527512%2527%2520height%253D%2527512%2527%2520rx%253D%2527110%2527%2520fill%253D%2527%25232f9e6b%2527%252F%253E%253Ctext%2520x%253D%2527256%2527%2520y%253D%2527340%2527%2520font-family%253D%2527Arial%2527%2520font-size%253D%2527260%2527%2520font-weight%253D%2527bold%2527%2520fill%253D%2527white%2527%2520text-anchor%253D%2527middle%2527%253E50%253C%252Ftext%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#f7f3ec; --card:#ffffff; --ink:#22201c; --muted:#7a736a;
+    --line:#e7e0d4; --green:#2f9e6b; --green-soft:#e7f4ee;
+    --coral:#e0613f; --coral-soft:#fbe9e3; --gold:#c79a2e; --blue:#3b7ea1;
+    --shadow:0 1px 3px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:max(22px,env(safe-area-inset-top)) 18px 60px}
+  .hero{text-align:center;padding:8px 0 18px}
+  .kicker{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--muted);font-weight:700}
+  .count{font-size:64px;font-weight:800;line-height:1;margin:6px 0 2px}
+  .count small{font-size:20px;font-weight:600;color:var(--muted)}
+  .heroSub{color:var(--muted);font-size:15px;margin-top:4px}
+  .grid{display:grid;gap:14px}
+  .stats{grid-template-columns:repeat(4,1fr);margin:18px 0}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px}
+  .stat{text-align:center;padding:16px 10px}
+  .stat .v{font-size:30px;font-weight:800;line-height:1}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:6px;font-weight:600}
+  .stat .sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .green{color:var(--green)} .coral{color:var(--coral)} .gold{color:var(--gold)} .blue{color:var(--blue)}
+  h2{font-size:17px;margin:0 0 2px} .sectionSub{color:var(--muted);font-size:13px;margin:0 0 14px}
+  .todayHead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .focus{background:var(--green-soft);color:var(--green);font-weight:700;font-size:13px;
+    padding:7px 12px;border-radius:999px;display:inline-block}
+  .ring{width:74px;height:74px;flex:none}
+  .checks{margin-top:14px;display:grid;gap:9px}
+  .chk{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);
+    border-radius:12px;cursor:pointer;user-select:none;transition:.15s;background:#fff}
+  .chk:hover{border-color:#d8cfbf}
+  .chk .box{width:24px;height:24px;border:2px solid #cfc6b6;border-radius:7px;flex:none;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;transition:.15s}
+  .chk .em{font-size:18px;width:24px;text-align:center;flex:none}
+  .chk .tx{font-weight:600;font-size:15px}
+  .chk .tx small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+  .chk.on{background:var(--green-soft);border-color:var(--green)}
+  .chk.on .box{background:var(--green);border-color:var(--green)}
+  .chk.on .tx{color:#1d5e41}
+  .weightRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  label.fld{font-weight:600;font-size:14px}
+  input[type=number]{font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;width:110px}
+  button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+  .btn{background:var(--ink);color:#fff} .btn:hover{opacity:.9}
+  .bar{height:14px;border-radius:999px;background:#eee7da;overflow:hidden;margin:10px 0 6px}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),#57c08a);border-radius:999px;transition:.4s}
+  .barLabels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+  .chartBox{position:relative;height:230px;margin-top:8px}
+  details{border:1px solid var(--line);border-radius:12px;margin-top:10px;background:#fff;overflow:hidden}
+  details summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";color:var(--muted);font-size:20px}
+  details[open] summary::after{content:"–"}
+  details .body{padding:0 16px 16px;color:#2c2a25}
+  details .body p{margin:8px 0} details .body strong{color:var(--ink)}
+  .day{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .day:last-child{border:0}
+  .day b{flex:none;width:42px;color:var(--coral)}
+  .note{background:var(--coral-soft);border:1px solid #f1c7b9;border-radius:12px;padding:14px 16px;font-size:14px;margin-top:14px}
+  .setupNote{background:var(--green-soft);border:1px solid #bfe3d0;border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:12px;color:#1d5e41;font-weight:600}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:26px;line-height:1.7}
+  .navday{display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:8px;color:var(--muted);font-size:13px}
+  .navday button{background:#efe9dd;color:var(--ink);padding:4px 10px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Fifty Strong</div>
+    <div class="count" id="count">—<small> days</small></div>
+    <div class="heroSub">to your 50th · <b>20 July 2026</b> · strong, clear-headed, sustainable</div>
+  </div>
+
+  <div class="grid stats">
+    <div class="card stat"><div class="v" id="sDays">—</div><div class="l">Days to go</div></div>
+    <div class="card stat"><div class="v green" id="sWeight">—</div><div class="l">Latest weight</div><div class="sub" id="sWeightSub">set your goal</div></div>
+    <div class="card stat"><div class="v coral" id="sBooze">0</div><div class="l">Alcohol-free streak</div><div class="sub">days running</div></div>
+    <div class="card stat"><div class="v gold" id="sWeights">0/3</div><div class="l">Lifts this week</div><div class="sub">BLS push · pull · legs</div></div>
+  </div>
+
+  <!-- TODAY -->
+  <div class="card">
+    <div class="navday">
+      <button id="prevDay">‹</button>
+      <span id="dayLabel">Today</span>
+      <button id="nextDay">›</button>
+    </div>
+    <div class="todayHead">
+      <div>
+        <h2 id="todayTitle">Today</h2>
+        <p class="sectionSub" id="todayDate"></p>
+        <span class="focus" id="todayFocus">—</span>
+      </div>
+      <svg class="ring" viewBox="0 0 36 36" aria-label="completion">
+        <path d="M18 2.5a15.5 15.5 0 1 1 0 31 15.5 15.5 0 1 1 0-31" fill="none" stroke="#eee7da" stroke-width="3.4"/>
+        <path id="ringFill" d="M18 2.5a15.5 15.5 0 1 1 0 31 15.5 15.5 0 1 1 0-31" fill="none" stroke="#2f9e6b" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="0 100"/>
+        <text x="18" y="20.5" text-anchor="middle" font-size="9" font-weight="700" fill="#22201c" id="ringTxt">0%</text>
+      </svg>
+    </div>
+    <div class="checks" id="checks"></div>
+  </div>
+
+  <!-- WEIGHT -->
+  <div class="card" style="margin-top:14px">
+    <h2>Weight &amp; body-fat glidepath</h2>
+    <p class="sectionSub" id="goalLine">Set your goal below, then log weight + body fat each day. Aim for the lines — steady beats heroic.</p>
+
+    <div class="setupNote" id="setupNote" style="display:none">👋 First time? Open “My goals” below and enter your start &amp; target to switch on the chart.</div>
+
+    <details id="goalsBox"><summary>🎯 My goals (set once)</summary>
+      <div class="body">
+        <div class="weightRow">
+          <label class="fld">Start weight (kg)</label><input type="number" id="cStart" step="0.1" placeholder="e.g. 83">
+          <label class="fld">Target weight</label><input type="number" id="cTarget" step="0.1" placeholder="e.g. 76">
+        </div>
+        <div class="weightRow">
+          <label class="fld">Start body fat (%)</label><input type="number" id="cBfStart" step="0.1" placeholder="e.g. 13">
+          <label class="fld">Target body fat</label><input type="number" id="cBfTarget" step="0.1" placeholder="e.g. 10">
+        </div>
+        <button class="btn" id="cSave">Save goals</button>
+      </div>
+    </details>
+
+    <div class="weightRow" style="margin-top:14px">
+      <label class="fld">Today — weight (kg)</label>
+      <input type="number" id="wInput" step="0.1" placeholder="kg">
+      <label class="fld">Body fat (%)</label>
+      <input type="number" id="bfInput" step="0.1" placeholder="%">
+      <button class="btn" id="wSave">Log today</button>
+    </div>
+    <div class="bar"><i id="wBar"></i></div>
+    <div class="barLabels"><span id="wStartLbl">Start —</span><span id="wNow">now —</span><span id="wTargetLbl">Target —</span></div>
+    <div class="bar" style="margin-top:14px"><i id="bfBar" style="background:linear-gradient(90deg,#3b7ea1,#6fb6d6)"></i></div>
+    <div class="barLabels"><span id="bfStartLbl">Start —</span><span id="bfNow">now —</span><span id="bfTargetLbl">Target —</span></div>
+    <div class="chartBox"><canvas id="chart"></canvas></div>
+  </div>
+
+  <!-- THE PLAN -->
+  <div class="card" style="margin-top:14px">
+    <h2>The plan</h2>
+    <p class="sectionSub">Built around your home gym, your morning HIIT-and-journal ritual, and 16:8. Tap to open.</p>
+
+    <details open><summary>🏋️ Training week — BLS 3-day + combat &amp; yoga</summary>
+      <div class="body">
+        <p><strong>Bigger Leaner Stronger 3-day split</strong> (push / pull / legs) on Mon·Wed·Fri, combat and yoga on the in-between days to keep the joints happy. Morning HIIT + journal stays your daily anchor — keep it light on lift days or use it as a warm-up.</p>
+        <div class="day"><b>Mon</b><span><strong>BLS Push</strong> — chest, shoulders, triceps</span></div>
+        <div class="day"><b>Tue</b><span><strong>Yoga / mobility</strong> — joint care, long walk</span></div>
+        <div class="day"><b>Wed</b><span><strong>BLS Pull</strong> — back &amp; biceps</span></div>
+        <div class="day"><b>Thu</b><span><strong>Combat</strong> — conditioning + fun</span></div>
+        <div class="day"><b>Fri</b><span><strong>BLS Legs</strong> — squat-focused</span></div>
+        <div class="day"><b>Sat</b><span><strong>Long walk</strong> / light combat or yoga</span></div>
+        <div class="day"><b>Sun</b><span><strong>Rest</strong> — stretch, walk, recover</span></div>
+      </div>
+    </details>
+
+    <details><summary>📋 The lifts (barbell · dumbbells ≤15kg · KB · bands)</summary>
+      <div class="body">
+        <p style="color:var(--muted)">Barbell lifts go <strong>heavy, 4–6 reps</strong>. Dumbbell/KB/band lifts go <strong>higher-rep to near-failure</strong> — your 15s cap the load, so you progress with reps, tempo, bands and shorter rest instead.</p>
+        <p style="margin-top:10px"><strong>Push (Mon)</strong> — chest, shoulders, triceps</p>
+        <div class="day"><b></b><span>Barbell Overhead Press (rack) — 3 × 4–6 <em>heavy</em></span></div>
+        <div class="day"><b></b><span>Incline Dumbbell Press (mini bench) — 3 × 8–12</span></div>
+        <div class="day"><b></b><span>Weighted / banded Push-up — 3 × to near failure</span></div>
+        <div class="day"><b></b><span>Dumbbell Side Lateral Raise — 3 × 12–15</span></div>
+        <div class="day"><b></b><span>Overhead DB/KB Triceps Extension — 3 × 10–15</span></div>
+        <p style="margin-top:12px"><strong>Pull (Wed)</strong> — back &amp; biceps</p>
+        <div class="day"><b></b><span>Barbell Deadlift — 3 × 4–6 <em>heavy</em></span></div>
+        <div class="day"><b></b><span>Barbell Bent-Over Row — 3 × 6–8 <em>heavy</em></span></div>
+        <div class="day"><b></b><span>One-Arm Dumbbell Row — 3 × 8–12</span></div>
+        <div class="day"><b></b><span>Band Lat Pulldown (anchor band high) — 3 × 12–15</span></div>
+        <div class="day"><b></b><span>Barbell Curl — 3 × 6–8 · DB Hammer Curl — 3 × 10–12</span></div>
+        <p style="margin-top:12px"><strong>Legs (Fri)</strong> — squat-focused</p>
+        <div class="day"><b></b><span>Barbell Back Squat (rack) — 3 × 4–6 <em>heavy</em></span></div>
+        <div class="day"><b></b><span>Barbell Romanian Deadlift — 3 × 6–8 <em>heavy</em></span></div>
+        <div class="day"><b></b><span>DB/KB Bulgarian Split Squat (rear foot on bench) — 3 × 8–12</span></div>
+        <div class="day"><b></b><span>KB Goblet Squat or Walking DB Lunge — 3 × 10–15</span></div>
+        <div class="day"><b></b><span>KB Swings (finisher) — 3 × 15 · Calf Raise — 3 × 15–20</span></div>
+      </div>
+    </details>
+
+    <details><summary>⚙️ How to run it (BLS method)</summary>
+      <div class="body">
+        <p><strong>Barbell lifts:</strong> 3 hard sets of <strong>4–6 reps</strong> (~80–85% 1RM), rest <strong>2–4 min</strong>, stop 1–3 reps shy of failure. <strong>Double progression:</strong> hit 6 on all sets → add ~2.5 kg next time.</p>
+        <p><strong>Dumbbell / KB / band lifts (capped at 15 kg):</strong> when the weight gets easy you can't just add a plate, so make it harder another way — more reps (up to ~15), slower 3–4 sec lowering, a band over the dumbbell, a pause at the bottom, or shorter rest. Take these close to failure.</p>
+        <p>Warm up each first barbell lift with a couple of light sets (~50%, ~70%) before your working weight.</p>
+        <p style="color:var(--muted)"><strong>Nearly-50 rule:</strong> heavy means form first, ego never. Grumbly joint → swap the move or drop the weight. Combat and yoga days are there so you don't break — take them. Run a lighter deload week if anything feels beaten up.</p>
+      </div>
+    </details>
+
+    <details><summary>🍗 Protein &amp; eating</summary>
+      <div class="body">
+        <p><strong>Protein target ≈ 150 g/day.</strong> This is the lever that keeps muscle while the fat comes off — non-negotiable on a deficit at our age. Roughly 30–40 g per meal across your eating window.</p>
+        <p>Easy hits: eggs, Greek yoghurt/skyr, chicken, white fish, prawns, lean beef, tofu/edamame, cottage cheese, a whey shake to top up.</p>
+        <p><strong>Modest deficit, not starvation.</strong> Protein + veg + smart carbs around training. The tummy goes when the whole-body deficit runs — there's no spot-reduction, but the deficit + steps + HIIT + sleep is exactly what shifts belly fat.</p>
+        <p>Hydrate hard (helps appetite and the fast), and add a pinch of salt / electrolytes on HIIT mornings.</p>
+      </div>
+    </details>
+
+    <details><summary>⏳ 16:8 fasting</summary>
+      <div class="body">
+        <p>Eat in an <strong>8-hour window</strong> — e.g. <strong>12:00–20:00</strong>. Black coffee, tea, water in the morning. Do your AM HIIT fasted, eat after.</p>
+        <p>You enjoy the challenge of it — lean into that. If a day's training is heavy or sleep was poor, it's fine to widen the window. Sane beats strict.</p>
+      </div>
+    </details>
+
+    <details><summary>🚫🍷 Alcohol &amp; mood</summary>
+      <div class="body">
+        <p><strong>Zero for the 5 weeks.</strong> This single change will do more than any workout: better sleep, lower resting HR, faster fat loss, steadier mood — and it directly unwinds the loop you described.</p>
+        <p>The streak counter up top is your friend. Protect it. Have a plan for the wobbly evening: alcohol-free beer, a strong tea, a walk, journal, bed.</p>
+        <p style="color:var(--muted)">This sits alongside, not instead of, the support you've already got. Movement, sleep and no booze are powerful for low mood — but keep your therapist/GP in the loop, and be as kind to yourself on the hard days as you'd be to a mate.</p>
+      </div>
+    </details>
+
+    <details><summary>😴 Sleep &amp; steps</summary>
+      <div class="body">
+        <p>Sleep is your one number with real upside. With an 18-month-old, perfect sleep isn't on the table, so this is "prioritise it when you can", not another box to fail. Aim <strong>7h+ when the night allows</strong>. Cutting alcohol alone will lift the <em>quality</em> of whatever sleep you get. Wind-down: screens down 30 min before bed, room cool and dark.</p>
+        <p><strong>10k+ steps</strong> daily — you already smash this. It's the quiet engine of fat loss. Keep it up.</p>
+      </div>
+    </details>
+
+    <div class="note">
+      <strong>Keep it sane.</strong> This is meant to make you feel strong and clear, not to become another stick to beat yourself with. A missed box or a heavier weigh-in isn't failure — it's data. Don't chase the deficit with punishment. If any of it starts feeling like overwhelm rather than momentum, ease off and tell someone. Hitting your target by the 20th would be brilliant; getting close and feeling like yourself again is already a win worth celebrating.
+    </div>
+  </div>
+
+  <div class="foot">
+    Start the workout from your watch → glance at the numbers → tick the boxes here.<br>
+    Everything saves only on this device. Add to Home Screen for an app icon. · run to 20 July 2026.
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY="fiftyStrong_v2", CFG_KEY="fiftyStrong_cfg";
+  var BIRTHDAY=new Date(2026,6,20);          // 20 July 2026
+  var START_DATE=new Date(2026,5,15);        // plan day 0 = 15 June 2026
+  var DEFAULTS={start:83,target:76,bfStart:13,bfTarget:10};
+
+  function loadCfg(){try{return JSON.parse(localStorage.getItem(CFG_KEY));}catch(e){return null;}}
+  function saveCfg(c){localStorage.setItem(CFG_KEY,JSON.stringify(c));}
+  var configured=!!loadCfg();
+  var cfg=loadCfg()||Object.assign({},DEFAULTS);
+
+  var ITEMS=[
+    {id:"move", em:"🔥", t:"Morning workout", s:"10–20 min HIIT, then journal"},
+    {id:"train", em:"🏋️", t:"Lift / combat / yoga", s:"BLS lift counts toward 3× this week"},
+    {id:"steps", em:"👟", t:"10k+ steps", s:"the quiet engine — you nail this"},
+    {id:"booze", em:"🚫", t:"No alcohol", s:"the big one — protect the streak"},
+    {id:"protein", em:"🍗", t:"Protein ~150g", s:"keeps muscle, loses fat"}
+  ];
+  var FOCUS=["Rest / stretch / long walk","BLS Push · chest, shoulders, triceps","Yoga / mobility (joint care)",
+    "BLS Pull · back & biceps","Combat","BLS Legs · squat-focused","Long walk / light combat or yoga"];
+
+  function load(){try{return JSON.parse(localStorage.getItem(KEY))||{days:{}}}catch(e){return{days:{}}}}
+  function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
+  var state=load();
+  function k(d){return d.toISOString().slice(0,10)}
+  function dayRec(key){var r=state.days[key];if(!r){r=state.days[key]={checks:{},weight:null,bf:null};}
+    if(r.bf===undefined)r.bf=null;return r;}
+
+  var today=new Date(); today.setHours(0,0,0,0);
+  var viewDate=new Date(today);
+  function daysTo(d){return Math.max(0,Math.ceil((BIRTHDAY-d)/86400000));}
+
+  // ---- stats helpers ----
+  function latest(field){
+    var keys=Object.keys(state.days).filter(function(x){return state.days[x][field]!=null}).sort();
+    if(!keys.length)return null;
+    return {v:state.days[keys[keys.length-1]][field],d:keys[keys.length-1]};
+  }
+  function streak(id){
+    var n=0,d=new Date(today);
+    for(var i=0;i<400;i++){var rec=state.days[k(d)];
+      if(rec&&rec.checks&&rec.checks[id]){n++;d.setDate(d.getDate()-1);}else break;}
+    return n;
+  }
+  function weightsThisWeek(){
+    var d=new Date(today),dow=(d.getDay()+6)%7,mon=new Date(d);mon.setDate(d.getDate()-dow);
+    var n=0;for(var i=0;i<7;i++){var c=new Date(mon);c.setDate(mon.getDate()+i);
+      var rec=state.days[k(c)];if(rec&&rec.checks&&rec.checks.train)n++;}
+    return n;
+  }
+
+  function renderStats(){
+    var dd=daysTo(today);
+    document.getElementById("count").innerHTML=dd+'<small> days</small>';
+    document.getElementById("sDays").textContent=dd;
+    var lw=latest("weight"), lb=latest("bf");
+    document.getElementById("sWeight").textContent=lw?lw.v.toFixed(1):"—";
+    document.getElementById("sWeightSub").textContent=lw?((lw.v-cfg.target).toFixed(1)+" kg to go"):("target "+cfg.target+" kg");
+    document.getElementById("sBooze").textContent=streak("booze");
+    document.getElementById("sWeights").textContent=weightsThisWeek()+"/3";
+
+    document.getElementById("wStartLbl").textContent="Start "+cfg.start+" kg";
+    document.getElementById("wTargetLbl").textContent="Target "+cfg.target+" kg";
+    document.getElementById("bfStartLbl").textContent="Start "+cfg.bfStart+"% fat";
+    document.getElementById("bfTargetLbl").textContent="Target "+cfg.bfTarget+"%";
+    document.getElementById("goalLine").innerHTML="Goal: <b>"+cfg.target+" kg at "+cfg.bfTarget+"% body fat</b>. Log weight + body fat each day — aim for the lines.";
+
+    var pctw=Math.max(0,Math.min(100,((cfg.start-(lw?lw.v:cfg.start))/(cfg.start-cfg.target||1))*100));
+    document.getElementById("wBar").style.width=pctw+"%";
+    document.getElementById("wNow").textContent="now "+(lw?lw.v.toFixed(1):"—")+" kg";
+    var pctb=Math.max(0,Math.min(100,((cfg.bfStart-(lb?lb.v:cfg.bfStart))/(cfg.bfStart-cfg.bfTarget||1))*100));
+    document.getElementById("bfBar").style.width=pctb+"%";
+    document.getElementById("bfNow").textContent="now "+(lb?lb.v.toFixed(1):"—")+"%";
+
+    document.getElementById("setupNote").style.display=configured?"none":"block";
+    document.getElementById("sWeightSub").textContent=configured?document.getElementById("sWeightSub").textContent:"set your goal";
+  }
+
+  // ---- checklist ----
+  function isToday(){return k(viewDate)===k(today);}
+  function renderDay(){
+    var rec=dayRec(k(viewDate));
+    document.getElementById("dayLabel").textContent=isToday()?"Today":"Viewing past day";
+    document.getElementById("nextDay").style.visibility=isToday()?"hidden":"visible";
+    document.getElementById("todayTitle").textContent=isToday()?"Today":viewDate.toLocaleDateString("en-GB",{weekday:"long"});
+    document.getElementById("todayDate").textContent=viewDate.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+    document.getElementById("todayFocus").textContent=FOCUS[viewDate.getDay()];
+    var box=document.getElementById("checks");box.innerHTML="";
+    ITEMS.forEach(function(it){
+      var on=!!rec.checks[it.id];
+      var el=document.createElement("div");
+      el.className="chk"+(on?" on":"");
+      el.innerHTML='<span class="em">'+it.em+'</span><span class="box">'+(on?"✓":"")+'</span>'+
+                   '<span class="tx">'+it.t+'<small>'+it.s+'</small></span>';
+      el.onclick=function(){rec.checks[it.id]=!rec.checks[it.id];save(state);renderDay();renderStats();};
+      box.appendChild(el);
+    });
+    var done=ITEMS.filter(function(it){return rec.checks[it.id]}).length;
+    var pct=Math.round(done/ITEMS.length*100);
+    document.getElementById("ringFill").setAttribute("stroke-dasharray",pct+" "+(100-pct));
+    document.getElementById("ringTxt").textContent=pct+"%";
+  }
+  document.getElementById("prevDay").onclick=function(){viewDate.setDate(viewDate.getDate()-1);renderDay();};
+  document.getElementById("nextDay").onclick=function(){if(!isToday()){viewDate.setDate(viewDate.getDate()+1);renderDay();}};
+
+  // ---- goals setup ----
+  function fillGoalInputs(){
+    if(configured){document.getElementById("cStart").value=cfg.start;document.getElementById("cTarget").value=cfg.target;
+      document.getElementById("cBfStart").value=cfg.bfStart;document.getElementById("cBfTarget").value=cfg.bfTarget;}
+  }
+  document.getElementById("cSave").onclick=function(){
+    var s=parseFloat(document.getElementById("cStart").value),t=parseFloat(document.getElementById("cTarget").value),
+        bs=parseFloat(document.getElementById("cBfStart").value),bt=parseFloat(document.getElementById("cBfTarget").value);
+    if(isNaN(s)||isNaN(t)||isNaN(bs)||isNaN(bt)){alert("Please fill all four goal numbers.");return;}
+    cfg={start:s,target:t,bfStart:bs,bfTarget:bt};saveCfg(cfg);configured=true;
+    document.getElementById("goalsBox").open=false;
+    renderStats();drawChart();
+  };
+
+  // ---- daily log ----
+  document.getElementById("wSave").onclick=function(){
+    var rec=dayRec(k(today)),v=parseFloat(document.getElementById("wInput").value),b=parseFloat(document.getElementById("bfInput").value);
+    if(!isNaN(v)&&v>=40&&v<=200)rec.weight=v;
+    if(!isNaN(b)&&b>=3&&b<=50)rec.bf=b;
+    save(state);
+    document.getElementById("wInput").value="";document.getElementById("bfInput").value="";
+    renderStats();drawChart();
+  };
+
+  // ---- chart ----
+  var chart;
+  function dayIndex(d){return Math.round((d-START_DATE)/86400000);}
+  var TOTAL=dayIndex(BIRTHDAY);
+  function buildTicks(){
+    var t={};for(var i=0;i<=TOTAL;i+=7){var d=new Date(START_DATE);d.setDate(d.getDate()+i);
+      t[i]=d.toLocaleDateString("en-GB",{day:"numeric",month:"short"});}
+    var bd=BIRTHDAY.toLocaleDateString("en-GB",{day:"numeric",month:"short"});t[TOTAL]=bd;return t;
+  }
+  var TICKS=buildTicks();
+  function actuals(field){
+    return Object.keys(state.days).filter(function(x){return state.days[x][field]!=null})
+      .sort().map(function(x){var d=x.split("-");return{x:dayIndex(new Date(+d[0],d[1]-1,+d[2])),y:state.days[x][field]};});
+  }
+  function drawChart(){
+    var ctx=document.getElementById("chart").getContext("2d");
+    var data={datasets:[
+      {label:"Weight target",data:[{x:0,y:cfg.start},{x:TOTAL,y:cfg.target}],borderColor:"#c8bda8",borderDash:[6,5],pointRadius:0,borderWidth:2,yAxisID:"y"},
+      {label:"Your weight",data:actuals("weight"),borderColor:"#2f9e6b",backgroundColor:"#2f9e6b",pointRadius:4,pointHoverRadius:6,tension:.25,borderWidth:2.5,yAxisID:"y"},
+      {label:"Body-fat target",data:[{x:0,y:cfg.bfStart},{x:TOTAL,y:cfg.bfTarget}],borderColor:"#bcd6e4",borderDash:[3,4],pointRadius:0,borderWidth:2,yAxisID:"y2"},
+      {label:"Your body fat",data:actuals("bf"),borderColor:"#3b7ea1",backgroundColor:"#3b7ea1",pointRadius:4,pointHoverRadius:6,tension:.25,borderWidth:2.5,yAxisID:"y2"}
+    ]};
+    var opts={responsive:true,maintainAspectRatio:false,parsing:true,interaction:{mode:"nearest"},
+      scales:{
+        x:{type:"linear",min:0,max:TOTAL,grid:{display:false},
+           ticks:{color:"#9a9285",stepSize:7,callback:function(v){return TICKS[v]||"";}}},
+        y:{position:"left",min:Math.floor(cfg.target-1),max:Math.ceil(cfg.start+1),
+           ticks:{color:"#2f9e6b",callback:function(v){return v+"kg"}},grid:{color:"#eee7da"}},
+        y2:{position:"right",min:Math.floor(cfg.bfTarget-1),max:Math.ceil(cfg.bfStart+1),
+           ticks:{color:"#3b7ea1",callback:function(v){return v+"%"}},grid:{display:false}}
+      },
+      plugins:{legend:{labels:{boxWidth:12,color:"#7a736a",font:{size:11}}},
+        tooltip:{callbacks:{title:function(it){return TICKS[it[0].parsed.x]||("day "+it[0].parsed.x);}}}}
+    };
+    if(chart)chart.destroy();
+    chart=new Chart(ctx,{type:"line",data:data,options:opts});
+  }
+
+  if(!configured)document.getElementById("goalsBox").open=true;
+  fillGoalInputs();
+  renderStats();renderDay();drawChart();
+})();
+</script>
+</body>
+</html>
